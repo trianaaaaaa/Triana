@@ -1,6 +1,18 @@
 {
   "functions": {
-    "**/*.php": {
+    "index.php": {
+      "runtime": "vercel-php@0.6.2"
+    },
+    "login.php": {
+      "runtime": "vercel-php@0.6.2"
+    },
+    "register.php": {
+      "runtime": "vercel-php@0.6.2"
+    },
+    "admin/*.php": {
+      "runtime": "vercel-php@0.6.2"
+    },
+    "user/*.php": {
       "runtime": "vercel-php@0.6.2"
     }
   },
