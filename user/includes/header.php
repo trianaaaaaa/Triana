@@ -1,10 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'user') {
-    header("Location: /login");
-    exit;
-}
 require '../config/koneksi.php';
+if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'user') {
 ?>
 <!DOCTYPE html>
 <html lang="en">

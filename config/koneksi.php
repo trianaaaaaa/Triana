@@ -9,6 +9,8 @@ $port = getenv('DB_PORT') ?: 3306;
 // Stabilize session for Vercel and clean URLs
 if (session_status() === PHP_SESSION_NONE) {
     if (getenv('VERCEL') == '1') {
+        // Use /tmp for sessions in serverless environment
+        session_save_path('/tmp');
         // Force session cookie to root to avoid different sessions in /admin and /user
         session_set_cookie_params([
             'path' => '/',
@@ -17,6 +19,7 @@ if (session_status() === PHP_SESSION_NONE) {
             'samesite' => 'Lax'
         ]);
     }
+    session_start();
 }
 
 // Support full MySQL URL format

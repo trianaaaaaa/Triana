@@ -1,5 +1,5 @@
 <?php
-session_start();
+require 'config/koneksi.php';
 if (isset($_SESSION['login'])) {
     if ($_SESSION['role'] == 'admin') {
         header("Location: /admin/dashboard");
