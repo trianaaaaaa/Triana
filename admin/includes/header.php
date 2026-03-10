@@ -1,6 +1,9 @@
 <?php
 require '../config/koneksi.php';
 if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
+    header("Location: /login");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
