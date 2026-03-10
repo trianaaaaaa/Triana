@@ -24,13 +24,38 @@ if (getenv('DB_SSL') == 'true') {
 }
 
 // Attempt connection
-$success = mysqli_real_connect($koneksi, $host, $user, $pass, $db, $port, NULL, MYSQLI_CLIENT_SSL);
-
-if (!$success) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+try {
+    $success = @mysqli_real_connect($koneksi, $host, $user, $pass, $db, $port, NULL, MYSQLI_CLIENT_SSL);
+} catch (mysqli_sql_exception $ex) {
+    $success = false;
+    $error_msg = $ex->getMessage();
 }
 
-if (!$koneksi) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+if (!$success) {
+    $error = isset($error_msg) ? $error_msg : mysqli_connect_error();
+    if (getenv('VERCEL') == '1') {
+        die("<div style='padding:20px; border:2px solid red; font-family:sans-serif;'>
+            <h2 style='color:red;'>Database Connection Error on Vercel</h2>
+            <p>Sistem mendeteksi kegagalan koneksi. Berikut adalah detail konfigurasi saat ini:</p>
+            <table border='1' cellpadding='5' style='border-collapse:collapse; width:100%; margin-bottom:20px;'>
+                <tr><th>Variable</th><th>Value</th><th>Status</th></tr>
+                <tr><td>Host</td><td>'".$host."'</td><td>".($host == 'localhost' ? "<span style='color:orange;'>Masih LOCALHOST</span>" : "<span style='color:green;'>OK</span>")."</td></tr>
+                <tr><td>User</td><td>'".$user."'</td><td>".($user == 'root' ? "<span style='color:orange;'>Bawaan (root)</span>" : "<span style='color:green;'>OK</span>")."</td></tr>
+                <tr><td>Database</td><td>'".$db."'</td><td>OK</td></tr>
+                <tr><td>Port</td><td>'".$port."'</td><td>OK</td></tr>
+            </table>
+            
+            <p style='color:red;'><b>Pesan Error:</b> $error</p>
+            
+            <hr>
+            <h3>Tindakan yang Perlu Diambil:</h3>
+            <ol>
+                <li>Pastikan variabel <b>DB_HOST</b> sudah diatur di Dashboard Vercel (Settings > Environment Variables).</li>
+                <li>Pastikan tidak ada salah ketik (Contoh: Seharusnya <code>DB_HOST</code>, bukan <code>DBHOST</code>).</li>
+                <li>Jika Anda sudah mengubahnya, lakukan <b>Redeploy</b> di Vercel agar perubahan tersimpan.</li>
+            </ol>
+        </div>");
+    }
+    die("Koneksi gagal: " . $error);
 }
 ?>
