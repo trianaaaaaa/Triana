@@ -1,10 +1,24 @@
 <?php
 // Support environment variables for Vercel deployment
+// Support environment variables for Vercel deployment
 $host = getenv('DB_HOST') ?: "localhost";
 $user = getenv('DB_USER') ?: "root";
 $pass = getenv('DB_PASS') ?: "";
 $db   = getenv('DB_NAME') ?: "tria_UKK";
 $port = getenv('DB_PORT') ?: 3306;
+
+// Stabilize session for Vercel and clean URLs
+if (session_status() === PHP_SESSION_NONE) {
+    if (getenv('VERCEL') == '1') {
+        // Force session cookie to root to avoid different sessions in /admin and /user
+        session_set_cookie_params([
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'Lax'
+        ]);
+    }
+}
 
 // Support full MySQL URL format
 $db_url = getenv('DATABASE_URL');

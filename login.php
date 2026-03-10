@@ -4,9 +4,9 @@ require 'config/koneksi.php';
 
 if (isset($_SESSION['login'])) {
     if ($_SESSION['role'] == 'admin') {
-        header("Location: /admin/dashboard.php");
+        header("Location: /admin/dashboard");
     } else {
-        header("Location: /user/dashboard.php");
+        header("Location: /user/dashboard");
     }
     exit;
 }
@@ -33,7 +33,7 @@ if (isset($_POST['login'])) {
                     $_SESSION['id'] = $row['id_admin'];
                     $_SESSION['nama'] = $row['nama'];
                     $_SESSION['role'] = 'admin';
-                    header("Location: /admin/dashboard.php");
+                    header("Location: /admin/dashboard");
                     exit;
                 } else {
                     $error = "Password salah untuk admin '$username'.";
@@ -66,7 +66,7 @@ if (isset($_POST['login'])) {
                     $_SESSION['id'] = $row['id_anggota'];
                     $_SESSION['nama'] = $row['nama'];
                     $_SESSION['role'] = 'user';
-                    header("Location: /user/dashboard.php");
+                    header("Location: /user/dashboard");
                     exit;
                 } else {
                     $error = "Password salah untuk user '$username'.";

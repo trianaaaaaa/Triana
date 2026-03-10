@@ -2,12 +2,12 @@
 session_start();
 if (isset($_SESSION['login'])) {
     if ($_SESSION['role'] == 'admin') {
-        header("Location: /admin/dashboard.php");
+        header("Location: /admin/dashboard");
     } else {
-        header("Location: /user/dashboard.php");
+        header("Location: /user/dashboard");
     }
 } else {
-    header("Location: /login.php");
+    header("Location: /login");
 }
 exit;
 ?>
