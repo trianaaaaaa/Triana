@@ -1,5 +1,5 @@
 <?php
-require '../config/koneksi.php';
+require_once dirname(__DIR__, 2) . '/config/koneksi.php';
 if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
     header("Location: /login");
     exit;

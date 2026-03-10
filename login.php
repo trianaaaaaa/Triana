@@ -1,5 +1,5 @@
 <?php
-require 'config/koneksi.php';
+require_once __DIR__ . '/config/koneksi.php';
 
 if (isset($_SESSION['login'])) {
     if ($_SESSION['role'] == 'admin') {
