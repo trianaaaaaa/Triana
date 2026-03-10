@@ -8,13 +8,11 @@ $port = getenv('DB_PORT') ?: 3306;
 
 // Stabilize session for Vercel and clean URLs
 if (session_status() === PHP_SESSION_NONE) {
+    session_name('TRIA_PERPUS_SESSION');
     if (getenv('VERCEL') == '1') {
-        // Use /tmp for sessions in serverless environment
         session_save_path('/tmp');
-        // Force session cookie to root to avoid different sessions in /admin and /user
         session_set_cookie_params([
             'path' => '/',
-            'secure' => true,
             'httponly' => true,
             'samesite' => 'Lax'
         ]);
