@@ -6,5 +6,23 @@
       "src": "**/*.php",
       "use": "vercel-php@0.6.2"
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/login",
+      "destination": "/login.php"
+    },
+    {
+      "source": "/register",
+      "destination": "/register.php"
+    },
+    {
+      "source": "/admin/dashboard",
+      "destination": "/admin/dashboard.php"
+    },
+    {
+      "source": "/user/dashboard",
+      "destination": "/user/dashboard.php"
+    }
   ]
 }
