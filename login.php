@@ -13,49 +13,78 @@ if (isset($_SESSION['login'])) {
 
 if (isset($_POST['login'])) {
     $username = $_POST['username'];
-    $password = md5($_POST['password']);
+    $password_input = $_POST['password'];
+    $password_hashed = md5($password_input);
     $role = $_POST['role'];
 
     if ($role == 'admin') {
-        $stmt = mysqli_prepare($koneksi, "SELECT id_admin, nama FROM admin WHERE username = ? AND password = ?");
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ss", $username, $password);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+        // First, check if user exists
+        $stmt_check = mysqli_prepare($koneksi, "SELECT id_admin, nama, password FROM admin WHERE username = ?");
+        if ($stmt_check) {
+            mysqli_stmt_bind_param($stmt_check, "s", $username);
+            mysqli_stmt_execute($stmt_check);
+            $result = mysqli_stmt_get_result($stmt_check);
 
             if (mysqli_num_rows($result) === 1) {
                 $row = mysqli_fetch_assoc($result);
-                $_SESSION['login'] = true;
-                $_SESSION['id'] = $row['id_admin'];
-                $_SESSION['nama'] = $row['nama'];
-                $_SESSION['role'] = 'admin';
-                header("Location: /admin/dashboard.php");
-                exit;
+                // Check password
+                if ($row['password'] === $password_hashed) {
+                    $_SESSION['login'] = true;
+                    $_SESSION['id'] = $row['id_admin'];
+                    $_SESSION['nama'] = $row['nama'];
+                    $_SESSION['role'] = 'admin';
+                    header("Location: /admin/dashboard.php");
+                    exit;
+                } else {
+                    $error = "Password salah untuk admin '$username'.";
+                }
+            } else {
+                // Check if table is empty
+                $check_empty = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM admin");
+                $data_empty = mysqli_fetch_assoc($check_empty);
+                if ($data_empty['total'] == 0) {
+                    $error = "Tabel 'admin' kosong. Silakan import database.sql.";
+                } else {
+                    $error = "Username admin '$username' tidak ditemukan.";
+                }
             }
         } else {
-            die("Error pada query: " . mysqli_error($koneksi) . ". Pastikan database '" . $db . "' dan tabel 'admin' sudah dibuat.");
+            die("Error pada query admin: " . mysqli_error($koneksi));
         }
     } else {
-        $stmt = mysqli_prepare($koneksi, "SELECT id_anggota, nama FROM anggota WHERE username = ? AND password = ?");
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ss", $username, $password);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+        // Check for user (anggota)
+        $stmt_check = mysqli_prepare($koneksi, "SELECT id_anggota, nama, password FROM anggota WHERE username = ?");
+        if ($stmt_check) {
+            mysqli_stmt_bind_param($stmt_check, "s", $username);
+            mysqli_stmt_execute($stmt_check);
+            $result = mysqli_stmt_get_result($stmt_check);
 
             if (mysqli_num_rows($result) === 1) {
                 $row = mysqli_fetch_assoc($result);
-                $_SESSION['login'] = true;
-                $_SESSION['id'] = $row['id_anggota'];
-                $_SESSION['nama'] = $row['nama'];
-                $_SESSION['role'] = 'user';
-                header("Location: /user/dashboard.php");
-                exit;
+                if ($row['password'] === $password_hashed) {
+                    $_SESSION['login'] = true;
+                    $_SESSION['id'] = $row['id_anggota'];
+                    $_SESSION['nama'] = $row['nama'];
+                    $_SESSION['role'] = 'user';
+                    header("Location: /user/dashboard.php");
+                    exit;
+                } else {
+                    $error = "Password salah untuk user '$username'.";
+                }
+            } else {
+                // Check if table is empty
+                $check_empty = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM anggota");
+                $data_empty = mysqli_fetch_assoc($check_empty);
+                if ($data_empty['total'] == 0) {
+                    $error = "Tabel 'anggota' kosong. Silakan import database.sql atau daftar akun baru.";
+                } else {
+                    $error = "Username user '$username' tidak ditemukan.";
+                }
             }
         } else {
-            die("Error pada query: " . mysqli_error($koneksi) . ". Pastikan database '" . $db . "' dan tabel 'anggota' sudah dibuat.");
+            die("Error pada query anggota: " . mysqli_error($koneksi));
         }
     }
-    $error = true;
 }
 ?>
 
@@ -100,7 +129,7 @@ if (isset($_POST['login'])) {
 
     <?php if (isset($error)) : ?>
         <div class="alert alert-danger text-center py-2" role="alert">
-            Username atau Password salah!
+            <?= is_string($error) ? $error : "Username atau Password salah!"; ?>
         </div>
     <?php endif; ?>
 
