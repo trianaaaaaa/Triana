@@ -1,6 +1,5 @@
 <?php
 // Support environment variables for Vercel deployment
-// Support environment variables for Vercel deployment
 $host = getenv('DB_HOST') ?: "localhost";
 $user = getenv('DB_USER') ?: "root";
 $pass = getenv('DB_PASS') ?: "";
