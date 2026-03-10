@@ -6,15 +6,5 @@
       "src": "**/*.php",
       "use": "vercel-php@0.6.2"
     }
-  ],
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
   ]
 }
